@@ -2,54 +2,379 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#6200ee">
-    <title>Eliculator</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon-512.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماشین‌حساب پیشرفته</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --danger: #ff4757;
+            --success: #2ed573;
+            --dark: #222;
+            --light: #f8f9fa;
+            --neon-glow: 0 0 15px #0ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f5f5f5;
+            transition: all 0.3s ease;
+        }
+
+        /* تم‌ها */
+        .glass-theme {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(15px);
+            color: #333;
+        }
+
+        .dark-theme {
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: #fff;
+        }
+
+        .neon-theme {
+            background: #0f0f1a;
+            color: #0ff;
+        }
+
+        .calculator {
+            width: 95%;
+            max-width: 600px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .glass-theme .calculator {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .dark-theme .calculator {
+            background: #333;
+            border: 1px solid #444;
+        }
+
+        .neon-theme .calculator {
+            background: #1a1a2e;
+            border: 1px solid var(--primary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .input-area {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #math-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            border: none;
+            text-align: right;
+            direction: ltr;
+        }
+
+        .dark-theme #math-input {
+            background: #444;
+            color: white;
+        }
+
+        .neon-theme #math-input {
+            background: #252540;
+            color: #0ff;
+            border: 1px solid #0ff;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 15px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-operator {
+            background: #666;
+            color: white;
+        }
+
+        .neon-theme .btn-primary {
+            box-shadow: 0 0 10px rgba(74, 107, 255, 0.7);
+        }
+
+        .neon-theme .btn-secondary {
+            box-shadow: 0 0 10px rgba(46, 213, 115, 0.7);
+        }
+
+        .neon-theme .btn-danger {
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.7);
+        }
+
+        .result-area {
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        #result {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: left;
+            direction: ltr;
+            word-break: break-all;
+        }
+
+        .theme-switcher {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .theme-btn {
+            padding: 10px 15px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .glass {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .dark {
+            background: rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        .neon {
+            background: rgba(0,255,255,0.1);
+            border: 1px solid #0ff;
+            color: #0ff;
+        }
+
+        @media (max-width: 600px) {
+            .buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            #math-input {
+                font-size: 1.2rem;
+                padding: 12px;
+            }
+            
+            #result {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="neon-theme">
     <div class="calculator">
-        <div class="theme-buttons">
-            <button class="theme-btn purple" onclick="setTheme('purple')"></button>
-            <button class="theme-btn blue" onclick="setTheme('blue')"></button>
-            <button class="theme-btn dark" onclick="setTheme('dark')"></button>
-            <button class="theme-btn gradient" onclick="setTheme('gradient')"></button>
+        <div class="theme-switcher">
+            <button class="theme-btn glass active" data-theme="glass">
+                <i class="fas fa-border-none"></i> شیشه‌ای
+            </button>
+            <button class="theme-btn dark" data-theme="dark">
+                <i class="fas fa-moon"></i> دارک
+            </button>
+            <button class="theme-btn neon" data-theme="neon">
+                <i class="fas fa-lightbulb"></i> نئون
+            </button>
         </div>
-        
-        <div class="display">
-            <div class="operation-display" id="operation"></div>
-            <div class="result-display" id="result">0</div>
+
+        <div class="input-area">
+            <input type="text" id="math-input" placeholder="معادله را وارد کنید...">
         </div>
-        
+
         <div class="buttons">
-            <button class="btn operator" onclick="clearAll()">C</button>
-            <button class="btn operator" onclick="backspace()">⌫</button>
-            <button class="btn operator" onclick="squareRoot()">√</button>
-            <button class="btn operator" onclick="setOperation('/')">÷</button>
+            <button class="btn btn-operator" onclick="addToInput('(')">(</button>
+            <button class="btn btn-operator" onclick="addToInput(')')">)</button>
+            <button class="btn btn-danger" onclick="clearInput()">C</button>
+            <button class="btn btn-danger" onclick="backspace()"><i class="fas fa-backspace"></i></button>
             
-            <button class="btn number" onclick="appendNumber('7')">7</button>
-            <button class="btn number" onclick="appendNumber('8')">8</button>
-            <button class="btn number" onclick="appendNumber('9')">9</button>
-            <button class="btn operator" onclick="setOperation('*')">×</button>
+            <button class="btn btn-operator" onclick="addToInput('sin(')">sin</button>
+            <button class="btn btn-operator" onclick="addToInput('cos(')">cos</button>
+            <button class="btn btn-operator" onclick="addToInput('tan(')">tan</button>
+            <button class="btn btn-operator" onclick="addToInput('√(')">√</button>
             
-            <button class="btn number" onclick="appendNumber('4')">4</button>
-            <button class="btn number" onclick="appendNumber('5')">5</button>
-            <button class="btn number" onclick="appendNumber('6')">6</button>
-            <button class="btn operator" onclick="setOperation('-')">-</button>
+            <button class="btn btn-operator" onclick="addToInput('7')">7</button>
+            <button class="btn btn-operator" onclick="addToInput('8')">8</button>
+            <button class="btn btn-operator" onclick="addToInput('9')">9</button>
+            <button class="btn btn-operator" onclick="addToInput('/')">÷</button>
             
-            <button class="btn number" onclick="appendNumber('1')">1</button>
-            <button class="btn number" onclick="appendNumber('2')">2</button>
-            <button class="btn number" onclick="appendNumber('3')">3</button>
-            <button class="btn operator" onclick="setOperation('+')">+</button>
+            <button class="btn btn-operator" onclick="addToInput('4')">4</button>
+            <button class="btn btn-operator" onclick="addToInput('5')">5</button>
+            <button class="btn btn-operator" onclick="addToInput('6')">6</button>
+            <button class="btn btn-operator" onclick="addToInput('*')">×</button>
             
-            <button class="btn number zero" onclick="appendNumber('0')">0</button>
-            <button class="btn number" onclick="appendDecimal()">.</button>
-            <button class="btn equals" onclick="calculate()">=</button>
+            <button class="btn btn-operator" onclick="addToInput('1')">1</button>
+            <button class="btn btn-operator" onclick="addToInput('2')">2</button>
+            <button class="btn btn-operator" onclick="addToInput('3')">3</button>
+            <button class="btn btn-operator" onclick="addToInput('-')">-</button>
+            
+            <button class="btn btn-operator" onclick="addToInput('0')">0</button>
+            <button class="btn btn-operator" onclick="addToInput('.')">.</button>
+            <button class="btn btn-primary" onclick="calculate()"><i class="fas fa-equals"></i></button>
+            <button class="btn btn-operator" onclick="addToInput('+')">+</button>
+            
+            <button class="btn btn-secondary" onclick="addToInput('Math.PI')">π</button>
+            <button class="btn btn-secondary" onclick="addToInput('Math.E')">e</button>
+            <button class="btn btn-operator" onclick="addToInput('^')">^</button>
+            <button class="btn btn-operator" onclick="addToInput('%')">%</button>
+        </div>
+
+        <div class="result-area">
+            <div id="result">0</div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // تغییر تم
+        function switchTheme(theme) {
+            document.body.className = `${theme}-theme`;
+            currentTheme = theme;
+            
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.theme === theme) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // مدیریت ورودی
+        function addToInput(value) {
+            const input = document.getElementById('math-input');
+            const startPos = input.selectionStart;
+            const endPos = input.selectionEnd;
+            
+            input.value = input.value.substring(0, startPos) + value + input.value.substring(endPos);
+            input.focus();
+            input.setSelectionRange(startPos + value.length, startPos + value.length);
+        }
+
+        function clearInput() {
+            document.getElementById('math-input').value = '';
+            document.getElementById('result').textContent = '0';
+        }
+
+        function backspace() {
+            const input = document.getElementById('math-input');
+            const startPos = input.selectionStart;
+            const endPos = input.selectionEnd;
+            
+            if (startPos === endPos && startPos > 0) {
+                input.value = input.value.substring(0, startPos - 1) + input.value.substring(endPos);
+                input.setSelectionRange(startPos - 1, startPos - 1);
+            } else {
+                input.value = input.value.substring(0, startPos) + input.value.substring(endPos);
+                input.setSelectionRange(startPos, startPos);
+            }
+        }
+
+        // محاسبات
+        function calculate() {
+            const input = document.getElementById('math-input').value;
+            if (!input) {
+                document.getElementById('result').textContent = 'لطفا معادله وارد کنید';
+                return;
+            }
+
+            try {
+                // تبدیل نمادها به فرمت قابل فهم برای JavaScript
+                let expression = input
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/\^/g, '**')
+                    .replace(/√\(/g, 'Math.sqrt(')
+                    .replace(/sin\(/g, 'Math.sin(')
+                    .replace(/cos\(/g, 'Math.cos(')
+                    .replace(/tan\(/g, 'Math.tan(')
+                    .replace(/%/g, '/100');
+
+                // محاسبه نتیجه
+                const result = new Function(`return ${expression}`)();
+                document.getElementById('result').textContent = result;
+            } catch (error) {
+                document.getElementById('result').textContent = 'خطا در معادله';
+                console.error(error);
+            }
+        }
+
+        // راه‌اندازی اولیه
+        let currentTheme = 'neon';
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchTheme(btn.dataset.theme));
+        });
+
+        // فعال کردن Enter برای محاسبه
+        document.getElementById('math-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
 </body>
 </html>
